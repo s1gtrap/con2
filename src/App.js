@@ -177,10 +177,10 @@ function App() {
                             }, () => setPermsGeo('denied'), console.log.bind(null));
                           }}>Click here to allow.</button>
                         </Error>
-                      : <BrowserRouter>
+                      : <BrowserRouter basename="/cc">
                           <Routes>
-                            <Route path="/tracker" element={<Home coords={coords} />}></Route>
-                            <Route path="/tracker/report" element={<Report coords={coords} />}></Route>
+                            <Route path="/" element={<Home coords={coords} />}></Route>
+                            <Route path="/report" element={<Report coords={coords} />}></Route>
                             <Route path="*" element={<NotFound />}></Route>
                           </Routes>
                         </BrowserRouter>

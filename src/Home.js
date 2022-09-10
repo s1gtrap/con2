@@ -49,7 +49,7 @@ function Home(props) {
     <>
       <nav className="navbar navbar-dark bg-dark navbar-expand-lg">
         <div className="container-fluid">
-          <a className="navbar-brand" href='/tracker'>con<sup>2</sup></a>
+          <a className="navbar-brand" href='/cc'>con<sup>2</sup></a>
           <form className="d-flex">
             <button type="button" className="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
               Invite friend!

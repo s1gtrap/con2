@@ -31,7 +31,7 @@ function Report() {
                     body: JSON.stringify({image: pic, stop: loc[1]}),
                   });*/
                   //const json = await res.json();
-                  navigate("/tracker");
+                  navigate("/cc");
                 })();
               }}>Yes, submit!</button>
             </div>
