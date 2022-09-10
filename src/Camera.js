@@ -1,13 +1,10 @@
 import PropTypes from 'prop-types'
-import React, { useState } from "react";
+import React from "react";
 
-import logo from './logo.svg';
 import './App.css';
 import Webcam from "react-webcam";
 
 function Camera(props) {
-  const [pic, setPic] = useState(null);
-
   const videoConstraints = {
     facingMode: "environment",
   };

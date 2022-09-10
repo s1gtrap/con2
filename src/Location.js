@@ -36,11 +36,11 @@ function Location(props) {
             results !== null
               ? results.map(([name, id], i) => {
                 return (
-                  <a className="list-group-item list-group-item-action" href="#" key={i} onClick={() => {
+                  <button className="list-group-item list-group-item-action" key={i} onClick={() => {
                     props.cb([name, id]);
                   }}>
                     {name}
-                  </a>
+                  </button>
                 );
               })
               : "loading stops.."

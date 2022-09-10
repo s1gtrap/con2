@@ -47,64 +47,60 @@ function Home(props) {
   const [stops, setStops] = useState([]);
   return (
     <>
-      <nav className="navbar navbar-dark bg-dark fixed-top navbar-expand-lg">
+      <nav className="navbar navbar-dark bg-dark navbar-expand-lg">
         <div className="container-fluid">
-          <a className="navbar-brand">con<sup>2</sup></a>
+          <a className="navbar-brand" href='/tracker'>con<sup>2</sup></a>
           <form className="d-flex">
-            <button type="button" class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <button type="button" className="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
               Invite friend!
             </button>
             <Link to="report" className="btn btn-outline-danger" href="#" role="button">Report?</Link>
           </form>
         </div>
       </nav>
-      <div style={{flex: 1,flexDirection:'column'}}>
-        <div style={{flex: 1}}>
-          <div className="modal" id="exampleModal" tabIndex="-1">
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Terms</h5>
-                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div className="modal-body">
-                  <p>Want to help us spread the word? Awesome!</p>
-                </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="button" className="btn btn-primary">Invite</button>
-                </div>
-              </div>
+      <div className="modal" id="exampleModal" tabIndex="-1">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Terms</h5>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              <p>Want to help us spread the word? Awesome!</p>
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" className="btn btn-primary">Invite</button>
             </div>
           </div>
-          {
-            props.coords
-              ? <MapContainer center={props.coords ? props.coords : [ 55.1669436, 10.159926]} zoom={13}>
-                  <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  />
-                  {
-                    stops.map((stop, i) => (
-                      <Marker key={i} position={[stop.lat, stop.lng]} icon={ConductorIcon}>
-                        <Popup maxWidth="100" maxHeight="auto">
-                          <img src={stop.image} />
-                        </Popup>
-                      </Marker>
-                    ))
-                  }
-                  <Marker position={props.coords}>
-                    <Popup maxWidth="200" maxHeight="auto">
-                      A pretty CSS3 popup. <br /> Easily customizable.
-                    </Popup>
-                  </Marker>
-                </MapContainer>
-              : <div className="d-flex justify-content-center mt-5 pt-5">
-                  <Spinner />
-                </div>
-          }
         </div>
       </div>
+      {
+        props.coords
+          ? <MapContainer center={props.coords ? props.coords : [ 55.1669436, 10.159926]} zoom={13}>
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              {
+                stops.map((stop, i) => (
+                  <Marker key={i} position={[stop.lat, stop.lng]} icon={ConductorIcon}>
+                    <Popup maxWidth="100" maxHeight="auto">
+                      <img src={stop.image} alt="Conductor" />
+                    </Popup>
+                  </Marker>
+                ))
+              }
+              <Marker position={props.coords}>
+                <Popup maxWidth="200" maxHeight="auto">
+                  A pretty CSS3 popup. <br /> Easily customizable.
+                </Popup>
+              </Marker>
+            </MapContainer>
+          : <div className="d-flex justify-content-center mt-5 pt-5">
+              <Spinner />
+            </div>
+      }
     </>
   );
 };

@@ -1,5 +1,3 @@
-import PropTypes from 'prop-types';
-
 function childrenOrText(props, propName, componentName) {
   return (props.hasOwnProperty('children') ^ props.hasOwnProperty('text')) === 0
     ? new Error('The `children` and `text` properties are mutually exclusive.') : null;

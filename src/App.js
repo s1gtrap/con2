@@ -5,10 +5,8 @@ import {
   Route,
 } from "react-router-dom";
 
-import Camera from "./Camera";
 import Error from "./Error";
 import Home from "./Home";
-import Location from "./Location";
 import Report from "./Report";
 import Spinner from "./Spinner";
 
@@ -25,27 +23,8 @@ function NotFound() {
 }
 
 function App() {
-  const [stage, setStage] = useState(0);
-  const [pic, setPic] = useState(null);
-  const [stop, setStop] = useState(null);
-  //const [status, setStatus] = useState(null);
   const [secret, setSecret] = useState(localStorage.getItem("secret"));
-  const [auth, setAuth] = useState(null);
-
-  async function submit(pic, stop) {
-    const res = await fetch(`${API_URL}/api/v1/reports`, {
-      method: 'post',
-      headers: {
-        "accept": "application/json",
-        "content-type": "application/json",
-        "authorization": `Bearer ${secret}`,
-      },
-      body: JSON.stringify({image: pic, stop}),
-    });
-    const json = await res.json();
-    console.log(stop);
-    setStage(0);
-  }
+  const [, setAuth] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -99,16 +78,7 @@ function App() {
 
 
     })();
-  }, []);
-  async function inviteFriend() {
-    const res = await fetch(`${API_URL}/api/v1/invite`, {
-      method: 'post',
-      headers: {
-        'authorization': `Bearer ${secret}`,
-      },
-    });
-    navigator.clipboard.writeText(`${window.location.origin}/verify/${await res.text()}`);
-  }
+  }, [secret]);
 
   const [isLoadingMe, setIsLoadingMe] = useState(false);
   const [me, setMe] = useState(null);
@@ -131,7 +101,7 @@ function App() {
         setIsLoadingMe(false);
       }
     })();
-  }, []);
+  }, [secret]);
 
   const [isLoadingStatus, setIsLoadingStatus] = useState(false);
   const [status, setStatus] = useState(null);
@@ -154,7 +124,7 @@ function App() {
         setIsLoadingStatus(false);
       }
     })();
-  }, []);
+  }, [secret]);
 
   const [isLoadingPerms, setIsLoadingPerms] = useState(true);
   const [permsGeo, setPermsGeo] = useState(null);
@@ -177,26 +147,9 @@ function App() {
     })();
   }, []);
 
-  const [error, setError] = useState(null);
+  const [, setError] = useState(null);
 
-  const [reports, setReports] = useState(null);
   const [coords, setCoords] = useState(null);
-  useEffect(() => {
-    (async () => {
-      /*navigator.geolocation.getCurrentPosition(async (sf) => {
-        setCoords([sf.coords.latitude, sf.coords.longitude]);
-      }, console.error.bind(null), console.log.bind(null));*/
-      const res = await fetch(`${API_URL}/api/v1/reports`, {
-        method: 'get',
-        headers: {
-          "accept": "application/json",
-          "content-type": "application/json",
-          "authorization": `Bearer ${secret}`,
-        },
-      });
-      const json = await res.json();
-    })();
-  }, []);
 
   return (
     isLoadingStatus || isLoadingMe
@@ -217,12 +170,12 @@ function App() {
                       ? <Error>
                           This app needs to know your location to show you nearby conductors.
                           {" "}
-                          <a href="#" onClick={() => {
+                          <button onClick={() => {
                             navigator.geolocation.getCurrentPosition(async (sf) => {
                               setPermsGeo('granted');
                               setCoords([sf.coords.latitude, sf.coords.longitude]);
                             }, () => setPermsGeo('denied'), console.log.bind(null));
-                          }}>Click here to allow.</a>
+                          }}>Click here to allow.</button>
                         </Error>
                       : <BrowserRouter>
                           <Routes>
