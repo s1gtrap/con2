@@ -1,8 +1,8 @@
 on: push
 
 env:
-  REACT_APP_API_URL=https://con2.tan.ge
-  REACT_APP_BASE_URL=https://tan.ge/cc
+  REACT_APP_API_URL: https://con2.tan.ge
+  REACT_APP_BASE_URL: https://tan.ge/cc
 
 jobs:
   build:
