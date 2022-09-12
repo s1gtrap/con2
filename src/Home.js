@@ -97,7 +97,7 @@ function Home(props) {
                 </Popup>
               </Marker>
             </MapContainer>
-          : <div className="d-flex justify-content-center mt-5 pt-5">
+          : <div className="d-flex justify-content-center mt-5">
               <Spinner />
             </div>
       }

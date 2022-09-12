@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types'
 import React from "react";
 
-import './App.css';
 import Webcam from "react-webcam";
 
 function Camera(props) {
