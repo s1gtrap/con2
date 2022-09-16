@@ -131,28 +131,16 @@ function App() {
   useEffect(() => {
     (async () => {
       const p = await navigator.permissions.query({ name: 'geolocation' });
+      console.log(p);
       setIsLoadingPerms(false);
-      if (p === 'prompt') {
-        setError("Sorry, but this app needs to know your location...");
-      } else if (p === 'denied') {
-        setError("Sorry, but this app needs to know your location...");
-      } else {
-        setPermsGeo(p.state);
-        setError(null);
-        navigator.geolocation.getCurrentPosition(async (sf) => {
-          setCoords([sf.coords.latitude, sf.coords.longitude]);
-        }, () => setPermsGeo('denied'), console.log.bind(null));
-        console.log(p.state);
-      }
+      setPermsGeo(p.state);
     })();
   }, []);
-
-  const [, setError] = useState(null);
 
   const [coords, setCoords] = useState(null);
 
   return (
-    isLoadingStatus || isLoadingMe
+    isLoadingStatus || isLoadingMe || isLoadingPerms
       ? <div className="text-center">
           <Spinner />
         </div>
@@ -170,14 +158,15 @@ function App() {
                       ? <Error>
                           This app needs to know your location to show you nearby conductors.
                           {" "}
-                          <button onClick={() => {
+                          <a href={`${process.env.REACT_APP_BASE_NAME}#`} onClick={() => {
                             navigator.geolocation.getCurrentPosition(async (sf) => {
+                              console.log("new");
                               setPermsGeo('granted');
                               setCoords([sf.coords.latitude, sf.coords.longitude]);
                             }, () => setPermsGeo('denied'), console.log.bind(null));
-                          }}>Click here to allow.</button>
+                          }}>Click here to allow.</a>
                         </Error>
-                      : <BrowserRouter basename="/cc">
+                      : <BrowserRouter basename={`${process.env.REACT_APP_BASE_NAME}`}>
                           <Routes>
                             <Route path="/" element={<Home coords={coords} />}></Route>
                             <Route path="/report" element={<Report coords={coords} />}></Route>
