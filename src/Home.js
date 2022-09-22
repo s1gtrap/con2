@@ -98,6 +98,7 @@ function Home(props) {
               </Marker>
             </MapContainer>
           : <div className="d-flex justify-content-center mt-5">
+              missing coords
               <Spinner />
             </div>
       }
