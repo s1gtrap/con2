@@ -151,31 +151,27 @@ function App() {
               ? <div className="text-center">
                   Sorry, 
                 </div>
-              : isLoadingPerms
-                  ? <div className="text-center">
-                      <Spinner />
-                    </div>
-                  : permsGeo === 'denied'
-                      ? <Error text={"Sorry, but this app needs to know your location to show you nearby controllers."} />
-                      : permsGeo === 'prompt'
-                          ? <Error>
-                              This app needs to know your location to show you nearby conductors.
-                              {" "}
-                              <a href={`${process.env.REACT_APP_BASE_NAME}#`} onClick={() => {
-                                navigator.geolocation.getCurrentPosition(async (sf) => {
-                                  console.log("new");
-                                  setPermsGeo('granted');
-                                  setCoords([sf.coords.latitude, sf.coords.longitude]);
-                                }, () => setPermsGeo('denied'), console.log.bind(null));
-                              }}>Click here to allow.</a>
-                            </Error>
-                          : <BrowserRouter basename={`${process.env.REACT_APP_BASE_NAME}`}>
-                              <Routes>
-                                <Route path="/" element={<Home coords={coords} />}></Route>
-                                <Route path="/report" element={<Report coords={coords} />}></Route>
-                                <Route path="*" element={<NotFound />}></Route>
-                              </Routes>
-                            </BrowserRouter>
+              : permsGeo === 'denied'
+                ? <Error text={"Sorry, but this app needs to know your location to show you nearby controllers."} />
+                : permsGeo === 'prompt'
+                    ? <Error>
+                        This app needs to know your location to show you nearby conductors.
+                        {" "}
+                        <a href={`${process.env.REACT_APP_BASE_NAME}#`} onClick={() => {
+                          navigator.geolocation.getCurrentPosition(async (sf) => {
+                            console.log("new");
+                            setPermsGeo('granted');
+                            setCoords([sf.coords.latitude, sf.coords.longitude]);
+                          }, () => setPermsGeo('denied'), console.log.bind(null));
+                        }}>Click here to allow.</a>
+                      </Error>
+                    : <BrowserRouter basename={`${process.env.REACT_APP_BASE_NAME}`}>
+                        <Routes>
+                          <Route path="/" element={<Home coords={coords} />}></Route>
+                          <Route path="/report" element={<Report coords={coords} />}></Route>
+                          <Route path="*" element={<NotFound />}></Route>
+                        </Routes>
+                      </BrowserRouter>
       }
     </>
   );
