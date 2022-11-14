@@ -1,12 +1,11 @@
-import React, { } from "react";
-import { } from "react-router-dom";
+import React from "react";
 
-
+import './App.css';
 
 function App() {
   return (
     <>
-      hello world
+      Work in progress.
     </>
   );
 }
