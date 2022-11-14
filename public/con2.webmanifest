@@ -15,6 +15,5 @@
   ],
   "theme_color": "#ff0000",
   "background_color": "#000000",
-  "display": "fullscreen",
-  "start_url": "https://tan.ge/cc"
+  "display": "standalone"
 }
