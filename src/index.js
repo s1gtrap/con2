@@ -25,6 +25,10 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <div className="container d-grid vh-100">
+      <div className="row justify-content-center align-self-center m-1">
+        <RouterProvider router={router} />
+      </div>
+    </div>
   </React.StrictMode>
 );
