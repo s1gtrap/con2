@@ -6,10 +6,10 @@ import Footer from './Footer';
 function Home() {
   return (
     <>
-      <button type="button" className="btn btn-lg btn-light">Sign Up</button>
+      <Link to="signup" className="btn btn-lg btn-light">Sign Up</Link>
       <Footer />
     </>
-  )
+  );
 }
 
 export default Home;

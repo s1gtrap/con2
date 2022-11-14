@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 import Footer from './Footer';
 
@@ -13,7 +13,7 @@ function About() {
       </div>
       <Footer />
     </>
-  )
+  );
 }
 
 export default About;

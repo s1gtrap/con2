@@ -3,20 +3,35 @@ import ReactDOM from 'react-dom/client';
 import {
   createBrowserRouter,
   RouterProvider,
-} from "react-router-dom";
+} from 'react-router-dom';
 
 import './index.css';
 import About from './About';
 import Home from './Home';
+import Permissions from './Permissions';
+import Scan from './Scan';
+import SignUp from './SignUp';
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <Home />,
   },
   {
-    path: "/about",
+    path: '/about',
     element: <About />,
+  },
+  {
+    path: 'permissions',
+    element: <Permissions />,
+  },
+  {
+    path: 'scan',
+    element: <Scan />,
+  },
+  {
+    path: '/signup',
+    element: <SignUp />,
   },
 ], {
   basename: '/con2',
