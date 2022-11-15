@@ -1,25 +1,32 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { Navigate } from "react-router-dom";
+import QrReader from 'react-qr-scanner'
 
 import Footer from './Footer';
 
 function Scan() {
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (localStorage.getItem('permissions')) {
-    } else {
-      navigate('/permissions', { state: '/scan' });
+  const [scan, setScan] = useState(null);
+  const handleScan = (data) => {
+    if (data && data.text && data.text.startsWith("con2=")) {
+      console.log(data);
+      const secret = data.text.slice('con2='.length)
+
+      setScan(data.canvas.toDataURL("image/jpeg"));
     }
-  });
+  };
   return (
     <>
-      <div className="card">
-        <div className="card-body">
-          <h5 className="card-title">Camera</h5>
-          <p className="card-text">TODO</p>
-        </div>
-      </div>
-      <Footer />
+      {
+        localStorage.getItem('permissions')
+          ? scan
+            ? <img src={scan} />
+            : <QrReader
+                delay={100}
+                onError={console.error.bind(null)}
+                onScan={handleScan}
+              />
+          : <Navigate to="/permissions" replace state="/scan" />
+      }
     </>
   );
 }
