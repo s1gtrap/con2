@@ -22,7 +22,7 @@ function Scan() {
           throw new Error(data.message);
         }
         console.log('data', data);
-        setCode(await QRCode.toDataURL(data.token));
+        setCode(await QRCode.toDataURL(`con2=${data.token}`));
       } catch (e) {
         console.error(e);
       } finally {

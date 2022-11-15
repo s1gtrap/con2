@@ -1,31 +1,43 @@
 import React, { useState } from 'react';
 import { Navigate } from "react-router-dom";
-import QrReader from 'react-qr-scanner'
+import { useMediaDevices } from "react-media-devices";
+import { useZxing } from "react-zxing";
 
 import Footer from './Footer';
 
 function Scan() {
-  const [scan, setScan] = useState(null);
-  const handleScan = (data) => {
-    if (data && data.text && data.text.startsWith("con2=")) {
-      setScan(data.canvas.toDataURL("image/jpeg"));
-    }
-  };
+  const [secret, setSecret] = useState(null);
+  const [invite, setInvite] = useState(null);
+  const { ref } = useZxing({
+    onResult(result) {
+      if (!secret && result.getText().startsWith('con2=')) { // FIXME: should this really be necessary?
+        const secret = result.getText().slice('con2='.length)
+        console.log('secret', secret);
+        setSecret(secret);
+
+        (async () => {
+          const res = await fetch(`/api/v1/invite?token=${encodeURIComponent(secret)}`);
+          const data = await res.json();
+          console.log(data);
+          setInvite(data);
+        })();
+      }
+    },
+  });
+
   return (
     <>
       {
-        localStorage.getItem('permissions')
-          ? scan
-            ? <img src={scan} alt="QR code scan" />
-            : <QrReader
-                delay={100}
-                facingMode="front"
-                onError={console.error.bind(null)}
-                onScan={handleScan}
-              />
-          : <Navigate to="/permissions" replace state="/scan" />
+        !secret && <video ref={ref} />
       }
-      <Footer />
+      {
+        invite
+          ? <p>claim invite?</p>
+          : <p>
+              <span>Last result:</span>
+              <span>{secret}</span>
+            </p>
+      }
     </>
   );
 }
