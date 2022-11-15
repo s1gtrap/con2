@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Navigate } from "react-router-dom";
 import QrReader from 'react-qr-scanner'
 
@@ -8,9 +8,6 @@ function Scan() {
   const [scan, setScan] = useState(null);
   const handleScan = (data) => {
     if (data && data.text && data.text.startsWith("con2=")) {
-      console.log(data);
-      const secret = data.text.slice('con2='.length)
-
       setScan(data.canvas.toDataURL("image/jpeg"));
     }
   };
@@ -19,7 +16,7 @@ function Scan() {
       {
         localStorage.getItem('permissions')
           ? scan
-            ? <img src={scan} />
+            ? <img src={scan} alt="QR code scan" />
             : <QrReader
                 delay={100}
                 onError={console.error.bind(null)}
@@ -27,6 +24,7 @@ function Scan() {
               />
           : <Navigate to="/permissions" replace state="/scan" />
       }
+      <Footer />
     </>
   );
 }

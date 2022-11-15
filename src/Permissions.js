@@ -8,11 +8,11 @@ function Scan() {
   const navigate = useNavigate();
   const [disabled, setDisabled] = useState(false);
   const [permissions, setPermissions] = useState(localStorage.getItem('permissions') || false);
-  const [sessionTokens, setSessionTokens] = useState(localStorage.getItem('sessionTokens') || false);
+  const [accessToken, setSessionTokens] = useState(localStorage.getItem('accessToken') || false);
   const [geolocation, setGeolocation] = useState(localStorage.getItem('geolocation') || false);
   const submit = () => {
     localStorage.setItem('permissions', permissions);
-    localStorage.setItem('sessionTokens', sessionTokens);
+    localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('geolocation', geolocation);
     navigate(state);
   };
@@ -29,8 +29,8 @@ function Scan() {
             </label>
           </div>
           <div className="form-check">
-            <input className="form-check-input" type="checkbox" id="sessionTokens" disabled={disabled} checked={sessionTokens} onChange={(e) => setSessionTokens(e.target.checked)} />
-            <label className="form-check-label" htmlFor="sessionTokens">
+            <input className="form-check-input" type="checkbox" id="accessToken" disabled={disabled} checked={accessToken} onChange={(e) => setSessionTokens(e.target.checked)} />
+            <label className="form-check-label" htmlFor="accessToken">
               Allow us to use local storage to store session tokens to let you stay authenticated.
             </label>
           </div>

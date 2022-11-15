@@ -8,6 +8,7 @@ import {
 import './index.css';
 import About from './About';
 import Home from './Home';
+import Invite from './Invite';
 import Permissions from './Permissions';
 import Scan from './Scan';
 import SignUp from './SignUp';
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
   {
     path: '/about',
     element: <About />,
+  },
+  {
+    path: 'invite',
+    element: <Invite />,
   },
   {
     path: 'permissions',
