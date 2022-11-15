@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
 
+import { fetchJson } from './api';
 import Footer from './Footer';
 
 function Scan() {
@@ -11,17 +12,12 @@ function Scan() {
     (async () => {
       setIsLoading(true);
       try {
-        const res = await fetch('/api/v1/invite', {
+        const data = await fetchJson('/api/v1/invite', {
           method: 'post',
           headers: {
             'authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           }
         });
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.message);
-        }
-        console.log('data', data);
         setCode(await QRCode.toDataURL(`con2=${data.token}`));
       } catch (e) {
         console.error(e);

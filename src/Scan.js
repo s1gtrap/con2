@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Navigate } from "react-router-dom";
-import { useMediaDevices } from "react-media-devices";
 import { useZxing } from "react-zxing";
 
+import { fetchJson } from './api';
 import Footer from './Footer';
 
 function Scan() {
@@ -16,8 +15,7 @@ function Scan() {
         setSecret(secret);
 
         (async () => {
-          const res = await fetch(`/api/v1/invite?token=${encodeURIComponent(secret)}`);
-          const data = await res.json();
+          const data = await fetchJson(`/api/v1/invite?token=${encodeURIComponent(secret)}`);
           console.log(data);
           setInvite(data);
         })();
@@ -38,6 +36,7 @@ function Scan() {
               <span>{secret}</span>
             </p>
       }
+      <Footer />
     </>
   );
 }

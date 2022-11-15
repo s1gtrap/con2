@@ -39,7 +39,7 @@ const router = createBrowserRouter([
     element: <SignUp />,
   },
 ], {
-  basename: '/con2',
+  basename: process.env['REACT_APP_BASE_NAME'],
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { fetchJson } from './api';
 import Footer from './Footer';
 
 function Home() {
@@ -10,15 +11,11 @@ function Home() {
     (async () => {
       setIsLoading(true);
       try {
-        const res = await fetch('/api/v1/me', {
+        const data = await fetchJson('/api/v1/me', {
           headers: {
             'authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           }
         });
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.message);
-        }
         setUser(data);
       } catch (e) {
         console.error(e);
