@@ -19,6 +19,7 @@ function Scan() {
             ? <img src={scan} alt="QR code scan" />
             : <QrReader
                 delay={100}
+                facingMode="front"
                 onError={console.error.bind(null)}
                 onScan={handleScan}
               />
