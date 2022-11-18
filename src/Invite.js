@@ -3,10 +3,10 @@ import QRCode from 'qrcode';
 
 import { fetchJson } from './api';
 import Footer from './Footer';
+import Spinner from './Spinner';
 
 function Scan() {
   const [isLoading, setIsLoading] = useState(false);
-  //const [invite, setInvite] = useState(false);
   const [code, setCode] = useState(null);
   useEffect(() => {
     (async () => {
@@ -30,7 +30,7 @@ function Scan() {
     <>
       {
         isLoading
-          ? "loading.."
+          ? <Spinner />
           : <div className="card">
               <div className="card-body">
                 <h5 className="card-title">QR Code</h5>

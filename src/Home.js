@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+
 import { Link } from 'react-router-dom';
 
 import { fetchJson } from './api';
 import Footer from './Footer';
+import Spinner from './Spinner';
 
 function Home() {
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +30,7 @@ function Home() {
     <>
       {
         isLoading
-          ? "loading.."
+          ? <Spinner />
           : user
               ? <div className="card">
                   <div className="card-body">
