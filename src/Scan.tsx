@@ -7,7 +7,7 @@ import { fetchJson } from './api';
 import Footer from './Footer';
 
 function Scan() {
-  const [secret, setSecret] = useState(null);
+  const [secret, setSecret] = useState<string | null>(null);
   const [invite, setInvite] = useState(null);
   const navigate = useNavigate();
   const { ref } = useZxing({

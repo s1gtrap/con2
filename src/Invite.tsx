@@ -7,7 +7,7 @@ import Spinner from './Spinner';
 
 function Scan() {
   const [isLoading, setIsLoading] = useState(false);
-  const [code, setCode] = useState(null);
+  const [code, setCode] = useState('');
   useEffect(() => {
     (async () => {
       setIsLoading(true);

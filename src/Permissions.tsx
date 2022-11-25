@@ -11,9 +11,9 @@ function Scan() {
   const [accessToken, setSessionTokens] = useState(localStorage.getItem('accessToken') || false);
   const [geolocation, setGeolocation] = useState(localStorage.getItem('geolocation') || false);
   const submit = () => {
-    localStorage.setItem('permissions', permissions);
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('geolocation', geolocation);
+    localStorage.setItem('permissions', permissions.toString());
+    localStorage.setItem('accessToken', accessToken.toString());
+    localStorage.setItem('geolocation', geolocation.toString());
     navigate(state);
   };
   return (
@@ -23,19 +23,19 @@ function Scan() {
           <h5 className="card-title">Hold Up!</h5>
           <p className="card-text">This application needs permission to scan an invite.</p>
           <div className="form-check">
-            <input className="form-check-input" type="checkbox" value="" id="permissions" disabled={disabled} checked={permissions} onChange={(e) => setPermissions(e.target.checked)} />
+            <input className="form-check-input" type="checkbox" value="" id="permissions" disabled={disabled} checked={!!permissions} onChange={(e) => setPermissions(e.target.checked)} />
             <label className="form-check-label" htmlFor="permissions">
               Allow us to use local storage to store permissions granted to avoid asking you again.
             </label>
           </div>
           <div className="form-check">
-            <input className="form-check-input" type="checkbox" id="accessToken" disabled={disabled} checked={accessToken} onChange={(e) => setSessionTokens(e.target.checked)} />
+            <input className="form-check-input" type="checkbox" id="accessToken" disabled={disabled} checked={!!accessToken} onChange={(e) => setSessionTokens(e.target.checked)} />
             <label className="form-check-label" htmlFor="accessToken">
               Allow us to use local storage to store session tokens to let you stay authenticated.
             </label>
           </div>
           <div className="form-check mb-3">
-            <input className="form-check-input" type="checkbox" id="geolocation" disabled={disabled} checked={geolocation} onChange={(e) => setGeolocation(e.target.checked)} />
+            <input className="form-check-input" type="checkbox" id="geolocation" disabled={disabled} checked={!!geolocation} onChange={(e) => setGeolocation(e.target.checked)} />
             <label className="form-check-label" htmlFor="geolocation">
               Allow us access to your geolocation to show nearby conductors and stops.
             </label>
