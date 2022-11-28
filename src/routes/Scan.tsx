@@ -3,8 +3,7 @@ import { Button, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useZxing } from "react-zxing";
 
-import { fetchJson } from './api';
-import Footer from './Footer';
+import { fetchJson } from '../api';
 
 function Scan() {
   const [secret, setSecret] = useState<string | null>(null);
@@ -57,7 +56,6 @@ function Scan() {
         </Modal.Footer>
       </Modal>
       <video ref={ref} />
-      <Footer />
     </>
   );
 }

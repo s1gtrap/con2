@@ -24,15 +24,13 @@ export function Guard({ children, permissions, prompt, required, showPermissions
     return children;
   } else {
     return (
-      <Card>
-        <Card.Body>
-          <Card.Title>Hold up!</Card.Title>
-          <Card.Text>
-            <p>{prompt}</p>
-            <Button onClick={showPermissionsPrompt}>Change Permissions</Button>
-          </Card.Text>
-        </Card.Body>
-      </Card>
+      <>
+        <Card.Title>Hold up!</Card.Title>
+        <Card.Text>
+          <p>{prompt}</p>
+          <Button onClick={showPermissionsPrompt}>Change Permissions</Button>
+        </Card.Text>
+      </>
     );
   }
 }

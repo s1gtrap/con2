@@ -6,12 +6,13 @@ import {
 } from 'react-router-dom';
 
 import './index.css';
-import About from './About';
-import Home from './Home';
-import Invite from './Invite';
+import About from './routes/About';
+import Home from './routes/Home';
+import Invite from './routes/Invite';
+import Root from './routes/Root';
+import Scan from './routes/Scan';
+import SignUp from './routes/SignUp';
 import { Guard as PGuard, Modal as PModal, Permissions } from './Permissions';
-import Scan from './Scan';
-import SignUp from './SignUp';
 
 function App() {
   const [showPermissions, setShowPermissions] = useState(false);
@@ -54,32 +55,38 @@ function App() {
   const router = createBrowserRouter([
     {
       path: '/',
-      element: <Home />,
-    },
-    {
-      path: '/about',
-      element: <About />,
-    },
-    {
-      path: '/invite',
-      element: <Invite />,
-    },
-    {
-      path: '/scan',
-      element: (
-        <PGuard
-          permissions={permissions}
-          prompt="We need permission to use your camera to scan invites!"
-          required="camera"
-          showPermissionsPrompt={() => setShowPermissions(true)}
-        >
-          <Scan />
-        </PGuard>
-      ),
-    },
-    {
-      path: '/signup',
-      element: <SignUp permissions={permissions} showPermissionsPrompt={() => setShowPermissions(true)} />,
+      element: <Root />,
+      children: [
+        {
+          path: '/',
+          element: <Home />,
+        },
+        {
+          path: '/about',
+          element: <About />,
+        },
+        {
+          path: '/invite',
+          element: <Invite />,
+        },
+        {
+          path: '/scan',
+          element: (
+            <PGuard
+              permissions={permissions}
+              prompt="We need permission to use your camera to scan invites!"
+              required="camera"
+              showPermissionsPrompt={() => setShowPermissions(true)}
+            >
+              <Scan />
+            </PGuard>
+          ),
+        },
+        {
+          path: '/signup',
+          element: <SignUp />,
+        },
+      ],
     },
   ], {
     basename: process.env['REACT_APP_BASE_NAME'],

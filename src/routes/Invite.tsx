@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
 
-import { fetchJson } from './api';
-import Footer from './Footer';
-import Spinner from './Spinner';
+import { fetchJson } from '../api';
+import Spinner from '../Spinner';
+import { Card } from 'react-bootstrap';
 
 function Scan() {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,20 +26,16 @@ function Scan() {
       }
     })();
   }, []);
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
   return (
     <>
-      {
-        isLoading
-          ? <Spinner />
-          : <div className="card">
-              <div className="card-body">
-                <h5 className="card-title">QR Code</h5>
-                <p className="card-text">Have your friend scan this code:</p>
-                <img src={code} alt="QR code" />
-              </div>
-            </div>
-      }
-      <Footer />
+      <Card.Title>QR Code</Card.Title>
+      <Card.Text>Have your friend scan this code:</Card.Text>
+      <img src={code} alt="QR code" />
     </>
   );
 }
