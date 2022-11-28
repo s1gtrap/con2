@@ -1,62 +1,165 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useCallback, useEffect, useState, ChangeEvent } from 'react';
+import { Button, Card, Form, Modal as BModal } from 'react-bootstrap';
 
-import Footer from './Footer';
+export type Permissions = {
+  localStorage: true,
+  camera: boolean | undefined,
+  geolocation: boolean | undefined,
+} | {
+  localStorage: false,
+  camera: false,
+  geolocation: false,
+};
 
-function Scan() {
-  const { state } = useLocation();
-  const navigate = useNavigate();
-  const [disabled, setDisabled] = useState(false);
-  const [permissions, setPermissions] = useState(localStorage.getItem('permissions') || false);
-  const [accessToken, setSessionTokens] = useState(localStorage.getItem('accessToken') || false);
-  const [geolocation, setGeolocation] = useState(localStorage.getItem('geolocation') || false);
-  const submit = () => {
-    localStorage.setItem('permissions', permissions.toString());
-    localStorage.setItem('accessToken', accessToken.toString());
-    localStorage.setItem('geolocation', geolocation.toString());
-    navigate(state);
-  };
-  return (
-    <>
-      <div className="card">
-        <div className="card-body">
-          <h5 className="card-title">Hold Up!</h5>
-          <p className="card-text">This application needs permission to scan an invite.</p>
-          <div className="form-check">
-            <input className="form-check-input" type="checkbox" value="" id="permissions" disabled={disabled} checked={!!permissions} onChange={(e) => setPermissions(e.target.checked)} />
-            <label className="form-check-label" htmlFor="permissions">
-              Allow us to use local storage to store permissions granted to avoid asking you again.
-            </label>
-          </div>
-          <div className="form-check">
-            <input className="form-check-input" type="checkbox" id="accessToken" disabled={disabled} checked={!!accessToken} onChange={(e) => setSessionTokens(e.target.checked)} />
-            <label className="form-check-label" htmlFor="accessToken">
-              Allow us to use local storage to store session tokens to let you stay authenticated.
-            </label>
-          </div>
-          <div className="form-check mb-3">
-            <input className="form-check-input" type="checkbox" id="geolocation" disabled={disabled} checked={!!geolocation} onChange={(e) => setGeolocation(e.target.checked)} />
-            <label className="form-check-label" htmlFor="geolocation">
-              Allow us access to your geolocation to show nearby conductors and stops.
-            </label>
-          </div>
-          <button className="btn btn-secondary">Reject All</button>
-          <button className="btn btn-secondary ms-1" onClick={(e) => {
-            setDisabled(true);
-            setTimeout(submit, 500);
-          }}>Accept Selected</button>
-          <button className="btn btn-primary ms-1" onClick={(e) => {
-            setDisabled(true);
-            setPermissions(true);
-            setSessionTokens(true);
-            setGeolocation(true);
-            setTimeout(submit, 500);
-          }}>Accept All</button>
-        </div>
-      </div>
-      <Footer />
-    </>
-  );
+type GuardProps = {
+  children: JSX.Element,
+  permissions: Permissions,
+  prompt: string,
+  required: keyof Permissions,
+  showPermissionsPrompt: () => void,
+};
+
+export function Guard({ children, permissions, prompt, required, showPermissionsPrompt }: GuardProps) {
+  if (permissions[required]) {
+    return children;
+  } else {
+    return (
+      <Card>
+        <Card.Body>
+          <Card.Title>Hold up!</Card.Title>
+          <Card.Text>
+            <p>{prompt}</p>
+            <Button onClick={showPermissionsPrompt}>Change Permissions</Button>
+          </Card.Text>
+        </Card.Body>
+      </Card>
+    );
+  }
 }
 
-export default Scan;
+type ModalProps = {
+  permissions: Permissions,
+  show: boolean,
+
+  onSubmit: (p: Permissions | null) => void,
+};
+
+export function Modal({ permissions, show, onSubmit }: ModalProps) {
+  const [disabled, setDisabled] = useState(false);
+  const [localStorageGranted, setLocalStorageGranted] = useState(permissions.localStorage);
+  const [cameraGranted, setCameraGranted] = useState(permissions.localStorage && permissions.camera);
+  const [geolocationGranted, setGeolocationGranted] = useState(permissions.localStorage && permissions.geolocation);
+
+  useEffect(() => {
+    setDisabled(!show);
+    setLocalStorageGranted(permissions.localStorage);
+    setCameraGranted(permissions.camera);
+    setGeolocationGranted(permissions.geolocation);
+  }, [show, permissions]);
+
+
+  const toggleLocalStorage = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setLocalStorageGranted(!!e.target.checked);
+    if (!e.target.checked) {
+      setCameraGranted(false);
+      setGeolocationGranted(false);
+    }
+  }, []);
+  const toggleCamera = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setCameraGranted(!!e.target.checked);
+  }, []);
+  const toggleGeolocation = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setGeolocationGranted(!!e.target.checked);
+  }, []);
+
+  const onClickReject = useCallback(() => {
+    setDisabled(true);
+    setLocalStorageGranted(false);
+    setCameraGranted(false);
+    setGeolocationGranted(false);
+    setTimeout(() => {
+      onSubmit({
+        localStorage: false,
+        camera: false,
+        geolocation: false,
+      });
+    }, 500);
+  }, [onSubmit]);
+  const onClickAccept = useCallback(() => {
+    setDisabled(true);
+    setTimeout(() => {
+      onSubmit(
+        localStorageGranted
+          ? {
+            localStorage: localStorageGranted,
+            camera: cameraGranted,
+            geolocation: geolocationGranted,
+          }
+          : {
+            localStorage: localStorageGranted,
+            camera: false,
+            geolocation: false,
+          }
+      );
+    }, 500);
+  }, [onSubmit, localStorageGranted, cameraGranted, geolocationGranted]);
+  const onClickAcceptAll = useCallback(() => {
+    setDisabled(true);
+    setLocalStorageGranted(true);
+    setCameraGranted(true);
+    setGeolocationGranted(true);
+    setTimeout(() => {
+      onSubmit({
+        camera: true,
+        geolocation: true,
+        localStorage: true,
+      });
+    }, 500);
+  }, [onSubmit]);
+  return (
+    <BModal show={show}>
+      <BModal.Header onHide={() => onSubmit(null)} closeButton>
+        <BModal.Title>Permissions Granted</BModal.Title>
+      </BModal.Header>
+      <BModal.Body>
+        <p>This application needs your permission to function correctly!</p>
+        <Form.Check
+          type="checkbox"
+          id="allowLocalStorage"
+          label="Allow us to use local storage to store permissions granted and let you stay authenticated"
+          checked={localStorageGranted}
+          disabled={disabled}
+          onChange={toggleLocalStorage}
+        />
+        <Form.Check
+          type="checkbox"
+          id="allowCamera"
+          label="Allow us to use your camera for scanning invites and taking bus stop pictures"
+          checked={cameraGranted}
+          disabled={disabled || !localStorageGranted}
+          onChange={toggleCamera}
+        />
+        <Form.Check
+          type="checkbox"
+          id="allowGeolocation"
+          label="Allow us to use your geolocation when submitting pictures and showing you nearby bus stops"
+          checked={geolocationGranted}
+          disabled={disabled || !localStorageGranted}
+          onChange={toggleGeolocation}
+        />
+      </BModal.Body>
+      <BModal.Footer>
+        <Button
+          variant="secondary"
+          onClick={onClickReject}
+          disabled={disabled}>Reject All</Button>
+        <Button
+          onClick={onClickAccept}
+          disabled={disabled || !localStorageGranted}>Accept Selected</Button>
+        <Button
+          onClick={onClickAcceptAll}
+          disabled={disabled}>Accept All</Button>
+      </BModal.Footer>
+    </BModal>
+  );
+}
