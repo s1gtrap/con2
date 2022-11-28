@@ -9,6 +9,7 @@ import './index.css';
 import About from './routes/About';
 import Home from './routes/Home';
 import Invite from './routes/Invite';
+import Map from './routes/Map';
 import Root from './routes/Root';
 import Scan from './routes/Scan';
 import SignUp from './routes/SignUp';
@@ -85,6 +86,19 @@ function App() {
         {
           path: '/signup',
           element: <SignUp />,
+        },
+        {
+          path: '/map',
+          element: (
+            <PGuard
+              permissions={permissions}
+              prompt="We need permission to use your geolocation to show nearby stops!"
+              required="geolocation"
+              showPermissionsPrompt={() => setShowPermissions(true)}
+            >
+              <Map />
+            </PGuard>
+          ),
         },
       ],
     },

@@ -1,7 +1,11 @@
 import BSSpinner from 'react-bootstrap/Spinner';
 
 function Spinner() {
-  return <BSSpinner animation="border" variant="light" />;
+  return (
+    <div className="text-center">
+      <BSSpinner animation="border" />
+    </div>
+  );
 }
 
 export default Spinner;
