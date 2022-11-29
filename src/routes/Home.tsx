@@ -1,39 +1,18 @@
-import React, { useEffect, useState } from 'react';
 import { Button, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-import { fetchJson } from '../api';
-import Spinner from '../Spinner';
+import { User } from '../App';
 
-function Home() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [user, setUser] = useState(false);
-  useEffect(() => {
-    (async () => {
-      setIsLoading(true);
-      try {
-        const data = await fetchJson('/api/v1/me', {
-          headers: {
-            'authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          }
-        });
-        setUser(data);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, []);
+type Props = {
+  user: User | null,
+};
 
-  if (isLoading) {
-    return <Spinner />;
-  }
-
+function Home({ user }: Props) {
   if (user) {
     return (
       <>
-        <Card.Title>Welcome back!</Card.Title>
+        <Card.Title>Con^2</Card.Title>
+        <Card.Text>Welcome back!</Card.Text>
         <Card.Text>The map is still a work in progress but you can invite your friends for now.</Card.Text>
         <Link to="invite">
           <Button>Invite Friend</Button>

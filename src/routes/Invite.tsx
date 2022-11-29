@@ -1,35 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
 
-import { fetchJson } from '../api';
-import Spinner from '../Spinner';
+import { Token, UProps } from '../App';
 import { Card } from 'react-bootstrap';
 
-function Scan() {
-  const [isLoading, setIsLoading] = useState(false);
+export type Invite = {
+  token: string,
+};
+
+function Scan({ fetchAuthJson }: UProps) {
   const [code, setCode] = useState('');
   useEffect(() => {
     (async () => {
-      setIsLoading(true);
       try {
-        const data = await fetchJson('/api/v1/invite', {
+        const data: Token = await fetchAuthJson('/api/v1/invite', {
           method: 'post',
-          headers: {
-            'authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          }
         });
         setCode(await QRCode.toDataURL(`con2=${data.token}`));
       } catch (e) {
         console.error(e);
       } finally {
-        setIsLoading(false);
       }
     })();
-  }, []);
-
-  if (isLoading) {
-    return <Spinner />;
-  }
+  }, [fetchAuthJson]);
 
   return (
     <>

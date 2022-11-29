@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 
 import Footer from '../Footer';
 
-export default function Root({ children }: any) {
+export default function Root({ children }: { children?: JSX.Element[] }) {
     return (
         <>
             <Card>

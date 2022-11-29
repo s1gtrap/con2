@@ -4,10 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { useZxing } from "react-zxing";
 
 import { fetchJson } from '../api';
+import { Token } from '../App';
+import { Invite } from './Invite';
 
-function Scan() {
+type Props = {
+  setAccessToken: (t: string | null) => void,
+}
+function Scan({ setAccessToken }: Props) {
   const [secret, setSecret] = useState<string | null>(null);
-  const [invite, setInvite] = useState(null);
+  const [invite, setInvite] = useState<Invite | null>(null);
   const navigate = useNavigate();
   const { ref } = useZxing({
     onResult(result) {
@@ -17,7 +22,7 @@ function Scan() {
         setSecret(secret);
 
         (async () => {
-          const data = await fetchJson(`/api/v1/invite?token=${encodeURIComponent(secret)}`);
+          const data = await fetchJson<Invite>(`/api/v1/invite?token=${encodeURIComponent(secret)}`);
           console.log(data);
           setInvite(data);
         })();
@@ -26,7 +31,7 @@ function Scan() {
   });
 
   const onClickClaim = async () => {
-    const data = await fetchJson('/api/v1/token', {
+    const data = await fetchJson<Token>('/api/v1/token', {
       method: 'post',
       headers: {
         'content-type': 'application/json',
@@ -35,8 +40,7 @@ function Scan() {
         token: secret,
       }),
     });
-    console.log(data);
-    localStorage.setItem('accessToken', data.token);
+    setAccessToken(data.token);
     navigate('/');
   };
 

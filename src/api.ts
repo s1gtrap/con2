@@ -1,6 +1,6 @@
 const apiUrl = process.env['REACT_APP_API_URL'] || '';
 
-export async function fetchJson(resource: string, opts?: object) {
+export async function fetchJson<T>(resource: string, opts?: object): Promise<T> {
   const res = await fetch(`${apiUrl}${resource}`, opts);
   const data = await res.json();
   if (!res.ok) {
