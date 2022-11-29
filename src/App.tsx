@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   createBrowserRouter,
-  Navigate,
+  Link,
   RouterProvider,
 } from 'react-router-dom';
 
@@ -37,7 +37,12 @@ function UGuard({ component, fetchAuthJson, user }: UGProps) {
   if (user !== null) {
     return component({ fetchAuthJson, user });
   } else {
-    return <Navigate to="/" />
+    return (
+      <div className="text-center">
+        <p>Sorry, only authenticated users are permitted here…</p>
+        <Link to="/">Click here to go back</Link>
+      </div>
+    );
   }
 }
 
