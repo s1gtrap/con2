@@ -17,14 +17,16 @@ export default function Root({ children }: { children?: JSX.Element[] }) {
     });
 
     return (
-        <>
-            <Card>
-                <Card.Body>
-                    <Outlet />
-                </Card.Body>
-            </Card>
+        <div className="container d-grid vh-100">
+            <div className="row justify-content-center align-self-center m-1">
+                <Card>
+                    <Card.Body>
+                        <Outlet />
+                    </Card.Body>
+                </Card>
 
-            <Footer />
-        </>
+                <Footer />
+            </div >
+        </div >
     );
 }

@@ -12,6 +12,7 @@ import About from './routes/About';
 import Home from './routes/Home';
 import Invite from './routes/Invite';
 import Map from './routes/Map';
+import Report from './routes/Report';
 import Root from './routes/Root';
 import Scan from './routes/Scan';
 import SignUp from './routes/SignUp';
@@ -161,43 +162,56 @@ function App() {
           ),
         },
         {
-          path: '/signup',
-          element: <SignUp />,
-        },
-        {
-          path: '/map',
+          path: '/report',
           element: (
             <PGuard
               permissions={permissions}
-              prompt="We need permission to use your geolocation to show nearby stops!"
-              required="geolocation"
+              prompt="We need permission to use your camera to scan invites!"
+              required="camera"
               showPermissionsPrompt={() => setShowPermissions(true)}
             >
-              <UGuard component={Map} fetchAuthJson={fetchAuthJson} user={user} />
+              <UGuard component={Report} fetchAuthJson={fetchAuthJson} user={user} />
             </PGuard>
           ),
         },
+        {
+          path: '/signup',
+          element: <SignUp />,
+        },
       ],
+    },
+    {
+      path: '/map',
+      element: (
+        <PGuard
+          permissions={permissions}
+          prompt="We need permission to use your geolocation to show nearby stops!"
+          required="geolocation"
+          showPermissionsPrompt={() => setShowPermissions(true)}
+        >
+          <UGuard component={Map} fetchAuthJson={fetchAuthJson} user={user} />
+        </PGuard>
+      ),
     },
   ], {
     basename: process.env['REACT_APP_BASE_NAME'],
   });
 
-  return (
-    <div className="container d-grid vh-100">
-      <div className="row justify-content-center align-self-center m-1">
-        {
-          isLoading
-            ? <Spinner />
-            : (
-              <>
-                <PModal onSubmit={onSubmitPermissions} permissions={permissions} show={showPermissions} />
-                <RouterProvider router={router} />
-              </>
-            )
-        }
+  if (isLoading) {
+    return (
+      <div className="container d-grid vh-100">
+        <div className="row justify-content-center align-self-center m-1">
+          <Spinner />
+        </div>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <>
+      <PModal onSubmit={onSubmitPermissions} permissions={permissions} show={showPermissions} />
+      <RouterProvider router={router} />
+    </>
   );
 }
 
