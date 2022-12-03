@@ -1,28 +1,28 @@
-import { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
-
-import { Token, UProps } from '../App';
+import React, { useEffect, useState } from 'react';
 import { Card } from 'react-bootstrap';
+
+import { fetchAuthJson } from '../fetch';
+import { Token, useAuthContext } from '../App';
 
 export type Invite = {
   token: string,
 };
 
-function Scan({ fetchAuthJson }: UProps) {
+function Scan() {
+  const [user] = useAuthContext();
   const [code, setCode] = useState('');
   useEffect(() => {
     (async () => {
       try {
-        const data: Token = await fetchAuthJson('/api/v1/invite', {
-          method: 'post',
-        });
+        const data: Token = await fetchAuthJson(user!.token, '/api/v1/invite');
         setCode(await QRCode.toDataURL(`con2=${data.token}`));
       } catch (e) {
         console.error(e);
       } finally {
       }
     })();
-  }, [fetchAuthJson]);
+  }, [user]);
 
   return (
     <>

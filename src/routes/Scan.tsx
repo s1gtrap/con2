@@ -3,8 +3,8 @@ import { Button, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useZxing } from "react-zxing";
 
-import { fetchJson } from '../api';
-import { Token } from '../App';
+import { fetchJson } from '../fetch';
+import { UserToken } from '../App';
 import { Invite } from './Invite';
 
 type Props = {
@@ -31,7 +31,7 @@ function Scan({ setAccessToken }: Props) {
   });
 
   const onClickClaim = async () => {
-    const data = await fetchJson<Token>('/api/v1/token', {
+    const data = await fetchJson<UserToken>('/api/v1/token', {
       method: 'post',
       headers: {
         'content-type': 'application/json',

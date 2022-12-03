@@ -1,12 +1,11 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import {
   createBrowserRouter,
-  Link,
   RouterProvider,
 } from 'react-router-dom';
 
-import { fetchJson } from './api';
+import { fetchAuthJson } from './fetch';
 import './index.css';
 import About from './routes/About';
 import Home from './routes/Home';
@@ -16,44 +15,47 @@ import Report from './routes/Report';
 import Root from './routes/Root';
 import Scan from './routes/Scan';
 import SignUp from './routes/SignUp';
-import { Guard as PGuard, Modal as PModal, Permissions } from './Permissions';
-import Spinner from './Spinner';
+import { Permissions } from './PermissionModal';
+import Profile from './Profile';
+import AuthGuard from './AuthGuard';
+import { PermissionsGranted } from './Permissions';
+import PermissionGuard from './PermissionGuard';
 
-export type User = {
-  id: string,
+export const AuthContext = createContext<[UserToken | null, (accessToken: string | null) => void] | [null]>([null]);
+export const useAuthContext = () => {
+  return useContext(AuthContext);
 };
-
-export type UProps = {
-  fetchAuthJson: (r: string, o?: object) => Promise<any>,
-  user: User,
-};
-
-type UGProps = {
-  component: (props: UProps) => JSX.Element,
-  fetchAuthJson: (r: string, o?: object) => Promise<any>,
-  user: User | null,
-}
-
-function UGuard({ component, fetchAuthJson, user }: UGProps) {
-  if (user !== null) {
-    return component({ fetchAuthJson, user });
-  } else {
-    return (
-      <div className="text-center">
-        <p>Sorry, only authenticated users are permitted here…</p>
-        <Link to="/">Click here to go back</Link>
-      </div>
-    );
-  }
-}
 
 export type Token = {
   token: string,
 };
 
+export type User = {
+  id: string,
+};
+
+export type UserToken = User & Token;
+
 function App() {
-  const [showPermissions, setShowPermissions] = useState(false);
-  const [permissions, setPermissions] = useState<Permissions>(() => {
+  const [accessToken, setAccessTokenState] = useState(() => localStorage.getItem('accessToken'));
+  const [userToken, setUserToken] = useState<UserToken | null>(null);
+  const setAccessToken = useCallback((accessToken: string | null) => {
+    if (accessToken !== null) {
+      localStorage.setItem('accessToken', accessToken);
+    } else {
+      localStorage.removeItem('accessToken');
+    }
+    setAccessTokenState(accessToken);
+  }, []);
+
+  useEffect(() => {
+    if (accessToken) {
+      fetchAuthJson(accessToken, '/api/v1/me')
+        .then(user => setUserToken(user as UserToken));
+    }
+  }, [accessToken]);
+
+  const [permissions, setGranted] = useState<PermissionsGranted>(() => {
     return !!localStorage.getItem('localStorage')
       ? {
         localStorage: true,
@@ -82,55 +84,6 @@ function App() {
     }
   }, [permissions]);
 
-  const onSubmitPermissions = useCallback((p: Permissions | null) => {
-    if (p) {
-      setPermissions(p);
-    }
-    setShowPermissions(false);
-  }, []);
-
-  const [accessToken, setAccessTokenState] = useState(() => localStorage.getItem('accessToken'));
-  const setAccessToken = useCallback((accessToken: string | null) => {
-    if (accessToken !== null) {
-      localStorage.setItem('accessToken', accessToken);
-    } else {
-      localStorage.removeItem('accessToken');
-    }
-    setAccessTokenState(accessToken);
-  }, []);
-  const [isLoading, setIsLoading] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  useEffect(() => {
-    (async () => {
-      setIsLoading(true);
-      try {
-        const data: User | null = await fetchJson('/api/v1/me', {
-          headers: {
-            'authorization': `Bearer ${accessToken}`,
-          }
-        });
-        setUser(data);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, [accessToken])
-  async function fetchAuthJson<T>(resource: string, opts?: object): Promise<T> {
-    try {
-      return await fetchJson<T>('/api/v1/invite', {
-        ...opts,
-        headers: {
-          // FIXME: opts.headers
-          'authorization': `Bearer ${accessToken}`,
-        },
-      });
-    } catch (e) {
-      throw e;
-    }
-  }
-
   const router = createBrowserRouter([
     {
       path: '/',
@@ -138,7 +91,17 @@ function App() {
       children: [
         {
           path: '/',
-          element: <Home user={user} />,
+          element: <Home />,
+        },
+        {
+          path: '/me',
+          element: (
+            <PermissionGuard granted={permissions} required={['localStorage']} setGranted={setGranted}>
+              <AuthGuard>
+                <Profile />
+              </AuthGuard>
+            </PermissionGuard>
+          ),
         },
         {
           path: '/about',
@@ -146,32 +109,28 @@ function App() {
         },
         {
           path: '/invite',
-          element: <UGuard component={Invite} fetchAuthJson={fetchAuthJson} user={user} />,
+          element: (
+            <AuthGuard>
+              <Invite />
+            </AuthGuard>
+          ),
         },
         {
           path: '/scan',
           element: (
-            <PGuard
-              permissions={permissions}
-              prompt="We need permission to use your camera to scan invites!"
-              required="camera"
-              showPermissionsPrompt={() => setShowPermissions(true)}
-            >
+            <PermissionGuard granted={permissions} required={['camera']} setGranted={setGranted}>
               <Scan setAccessToken={setAccessToken} />
-            </PGuard>
+            </PermissionGuard>
           ),
         },
         {
           path: '/report',
           element: (
-            <PGuard
-              permissions={permissions}
-              prompt="We need permission to use your camera to scan invites!"
-              required="camera"
-              showPermissionsPrompt={() => setShowPermissions(true)}
-            >
-              <UGuard component={Report} fetchAuthJson={fetchAuthJson} user={user} />
-            </PGuard>
+            <PermissionGuard granted={permissions} required={['camera', 'localStorage']} setGranted={setGranted}>
+              <AuthGuard>
+                <Report />
+              </AuthGuard>
+            </PermissionGuard>
           ),
         },
         {
@@ -183,35 +142,21 @@ function App() {
     {
       path: '/map',
       element: (
-        <PGuard
-          permissions={permissions}
-          prompt="We need permission to use your geolocation to show nearby stops!"
-          required="geolocation"
-          showPermissionsPrompt={() => setShowPermissions(true)}
-        >
-          <UGuard component={Map} fetchAuthJson={fetchAuthJson} user={user} />
-        </PGuard>
+        <PermissionGuard granted={permissions} required={['geolocation', 'localStorage']} setGranted={setGranted} wrapping={Root}>
+          <AuthGuard>
+            <Map />
+          </AuthGuard>
+        </PermissionGuard>
       ),
     },
   ], {
     basename: process.env['REACT_APP_BASE_NAME'],
   });
 
-  if (isLoading) {
-    return (
-      <div className="container d-grid vh-100">
-        <div className="row justify-content-center align-self-center m-1">
-          <Spinner />
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <>
-      <PModal onSubmit={onSubmitPermissions} permissions={permissions} show={showPermissions} />
+    <AuthContext.Provider value={[userToken, setAccessToken]}>
       <RouterProvider router={router} />
-    </>
+    </AuthContext.Provider>
   );
 }
 

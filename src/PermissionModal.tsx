@@ -1,39 +1,15 @@
 import React, { useCallback, useEffect, useState, ChangeEvent } from 'react';
-import { Button, Card, Form, Modal as BModal } from 'react-bootstrap';
+import { Button, Form, Modal } from 'react-bootstrap';
 
 export type Permissions = {
   localStorage: true,
-  camera: boolean | undefined,
-  geolocation: boolean | undefined,
+  camera: boolean,
+  geolocation: boolean,
 } | {
   localStorage: false,
   camera: false,
   geolocation: false,
 };
-
-type GuardProps = {
-  children: JSX.Element,
-  permissions: Permissions,
-  prompt: string,
-  required: keyof Permissions,
-  showPermissionsPrompt: () => void,
-};
-
-export function Guard({ children, permissions, prompt, required, showPermissionsPrompt }: GuardProps) {
-  if (permissions[required]) {
-    return children;
-  } else {
-    return (
-      <>
-        <Card.Title>Hold up!</Card.Title>
-        <Card.Text>
-          <p>{prompt}</p>
-          <Button onClick={showPermissionsPrompt}>Change Permissions</Button>
-        </Card.Text>
-      </>
-    );
-  }
-}
 
 type ModalProps = {
   permissions: Permissions,
@@ -42,7 +18,7 @@ type ModalProps = {
   onSubmit: (p: Permissions | null) => void,
 };
 
-export function Modal({ permissions, show, onSubmit }: ModalProps) {
+function PermissionModal({ permissions, show, onSubmit }: ModalProps) {
   const [disabled, setDisabled] = useState(false);
   const [localStorageGranted, setLocalStorageGranted] = useState(permissions.localStorage);
   const [cameraGranted, setCameraGranted] = useState(permissions.localStorage && permissions.camera);
@@ -115,11 +91,11 @@ export function Modal({ permissions, show, onSubmit }: ModalProps) {
     }, 500);
   }, [onSubmit]);
   return (
-    <BModal show={show}>
-      <BModal.Header onHide={() => onSubmit(null)} closeButton>
-        <BModal.Title>Permissions Granted</BModal.Title>
-      </BModal.Header>
-      <BModal.Body>
+    <Modal show={show}>
+      <Modal.Header onHide={() => onSubmit(null)} closeButton>
+        <Modal.Title>Permissions Granted</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
         <p>This application needs your permission to function correctly!</p>
         <Form.Check
           type="checkbox"
@@ -145,8 +121,8 @@ export function Modal({ permissions, show, onSubmit }: ModalProps) {
           disabled={disabled || !localStorageGranted}
           onChange={toggleGeolocation}
         />
-      </BModal.Body>
-      <BModal.Footer>
+      </Modal.Body>
+      <Modal.Footer>
         <Button
           variant="secondary"
           onClick={onClickReject}
@@ -157,7 +133,9 @@ export function Modal({ permissions, show, onSubmit }: ModalProps) {
         <Button
           onClick={onClickAcceptAll}
           disabled={disabled}>Accept All</Button>
-      </BModal.Footer>
-    </BModal>
+      </Modal.Footer>
+    </Modal>
   );
 }
+
+export default PermissionModal;

@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { UProps } from '../App';
+//import { useAuthContext } from '../App';
 
 type Stop = {
   id: string,
@@ -25,9 +25,10 @@ async function fetchNearbyStops(lat: number, lng: number): Promise<Stop[]> {
     });
 }
 
-function Report({ user }: UProps) {
+function Report() {
   const [lat, lng]: [number, number] = [56.150450, 10.204610];
   const [data, setData] = useState<Stop[]>([]);
+  //const [] = useAuthContext();
   useEffect(() => {
     fetchNearbyStops(lat, lng)
       .then((data) => setData(data));

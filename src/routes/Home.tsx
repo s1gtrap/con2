@@ -1,13 +1,10 @@
-import { Button, Card } from 'react-bootstrap';
+import React, { Button, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-import { User } from '../App';
+import { useAuthContext } from '../App';
 
-type Props = {
-  user: User | null,
-};
-
-function Home({ user }: Props) {
+function Home() {
+  const [user] = useAuthContext();
   if (user) {
     return (
       <>

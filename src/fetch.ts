@@ -8,3 +8,13 @@ export async function fetchJson<T>(resource: string, opts?: object): Promise<T> 
   }
   return data;
 }
+
+export async function fetchAuthJson<T>(accessToken: string, resource: string, opts?: object): Promise<T> {
+  return await fetchJson<T>(resource, {
+    ...opts,
+    headers: {
+      // FIXME: opts.headers
+      'authorization': `Bearer ${accessToken}`,
+    },
+  });
+}

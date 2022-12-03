@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Card } from 'react-bootstrap';
 import { useNavigate, Outlet } from 'react-router-dom';
 
 import Footer from '../Footer';
 
-export default function Root({ children }: { children?: JSX.Element[] }) {
+export default function Root({ children }: { children?: JSX.Element }) {
     const navigate = useNavigate();
     useEffect(() => {
         // XXX: super hacky way of bringing invalid gh-pages requests back to
@@ -21,7 +21,9 @@ export default function Root({ children }: { children?: JSX.Element[] }) {
             <div className="row justify-content-center align-self-center m-1">
                 <Card>
                     <Card.Body>
-                        <Outlet />
+                        {
+                            children ? children : <Outlet />
+                        }
                     </Card.Body>
                 </Card>
 

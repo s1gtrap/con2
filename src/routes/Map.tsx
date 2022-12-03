@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer } from 'react-leaflet';
 
-import { UProps } from '../App';
+import { useAuthContext } from '../App';
 import Spinner from '../Spinner';
 
-function geolocation() {
+function geolocation(): Promise<GeolocationCoordinates> {
     return new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
             (position: GeolocationPosition) => resolve(position.coords),
@@ -15,7 +15,7 @@ function geolocation() {
     });
 }
 
-function fetchReports(fetchAuthJson: (r: string, o?: object) => void) {
+function fetchReports(token: string) {
     return new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
             (position: GeolocationPosition) => resolve(position.coords),
@@ -24,21 +24,19 @@ function fetchReports(fetchAuthJson: (r: string, o?: object) => void) {
     });
 }
 
-function Map({ fetchAuthJson }: UProps) {
-    const [isLoading, setIsLoading] = useState(true);
+function Map() {
     const [coords, setCoords] = useState<GeolocationCoordinates | null>(null);
     //const [reports, setReports] = useState<Report | null>(null);
+    const [user] = useAuthContext();
 
     useEffect(() => {
-        (async () => {
-            setIsLoading(true);
-            const [coords]: any[] = await Promise.all([geolocation(), fetchReports(fetchAuthJson)]);
-            setCoords(coords);
-            setIsLoading(false);
-        })();
-    }, [fetchAuthJson]);
+        Promise.all([geolocation(), fetchReports(user!.token)])
+            .then(([coords, reports]) => {
+                setCoords(coords);
+            });
+    }, [coords, user]);
 
-    if (isLoading) {
+    if (!coords || !user) {
         return <Spinner />;
     }
 
