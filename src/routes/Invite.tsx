@@ -15,7 +15,9 @@ function Scan() {
   useEffect(() => {
     (async () => {
       try {
-        const data: Token = await fetchAuthJson(user!.token, '/api/v1/invite');
+        const data: Token = await fetchAuthJson(user!.token, '/api/v1/invite', {
+          method: 'post',
+        });
         setCode(await QRCode.toDataURL(`con2=${data.token}`));
       } catch (e) {
         console.error(e);
