@@ -37,8 +37,8 @@ export type User = {
 export type UserToken = User & Token;
 
 function App() {
-  const [accessToken, setAccessTokenState] = useState(() => localStorage.getItem('accessToken'));
-  const [userToken, setUserToken] = useState<UserToken | null>(null);
+  const [token, setAccessTokenState] = useState<string | null>(() => localStorage.getItem('accessToken'));
+  const [user, setUser] = useState<User | null>(null);
   const setAccessToken = useCallback((accessToken: string | null) => {
     if (accessToken !== null) {
       localStorage.setItem('accessToken', accessToken);
@@ -49,11 +49,11 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (accessToken) {
-      fetchAuthJson(accessToken, '/api/v1/me')
-        .then(user => setUserToken(user as UserToken));
+    if (token) {
+      fetchAuthJson(token, '/api/v1/me')
+        .then(user => setUser(user as User));
     }
-  }, [accessToken]);
+  }, [token]);
 
   const [permissions, setGranted] = useState<PermissionsGranted>(() => {
     return !!localStorage.getItem('localStorage')
@@ -124,20 +124,20 @@ function App() {
           ),
         },
         {
-          path: '/report',
-          element: (
-            <PermissionGuard granted={permissions} required={['camera', 'localStorage']} setGranted={setGranted}>
-              <AuthGuard>
-                <Report />
-              </AuthGuard>
-            </PermissionGuard>
-          ),
-        },
-        {
           path: '/signup',
           element: <SignUp />,
         },
       ],
+    },
+    {
+      path: '/report',
+      element: (
+        <PermissionGuard granted={permissions} required={['camera', 'localStorage']} setGranted={setGranted}>
+          <AuthGuard>
+            <Report />
+          </AuthGuard>
+        </PermissionGuard>
+      ),
     },
     {
       path: '/map',
@@ -154,7 +154,7 @@ function App() {
   });
 
   return (
-    <AuthContext.Provider value={[userToken, setAccessToken]}>
+    <AuthContext.Provider value={[{ ...user!, token: token! }, setAccessToken]}>
       <RouterProvider router={router} />
     </AuthContext.Provider>
   );

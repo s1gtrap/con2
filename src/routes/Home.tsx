@@ -5,7 +5,7 @@ import { useAuthContext } from '../App';
 
 function Home() {
   const [user] = useAuthContext();
-  if (user) {
+  if (user?.id) {
     return (
       <>
         <Card.Title>Con^2</Card.Title>
