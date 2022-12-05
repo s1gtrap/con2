@@ -14,6 +14,9 @@ function Home() {
         <Link to="invite">
           <Button>Invite Friend</Button>
         </Link>
+        <Link to="/map">
+          <Button variant="success ml-2">View Map</Button>
+        </Link>
       </>
     );
   } else {
