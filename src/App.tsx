@@ -116,14 +116,6 @@ function App() {
           ),
         },
         {
-          path: '/scan',
-          element: (
-            <PermissionGuard granted={permissions} required={['camera']} setGranted={setGranted}>
-              <Scan setAccessToken={setAccessToken} />
-            </PermissionGuard>
-          ),
-        },
-        {
           path: '/signup',
           element: <SignUp />,
         },
@@ -136,6 +128,14 @@ function App() {
           <AuthGuard>
             <Report />
           </AuthGuard>
+        </PermissionGuard>
+      ),
+    },
+    {
+      path: '/scan',
+      element: (
+        <PermissionGuard granted={permissions} required={['camera']} setGranted={setGranted}>
+          <Scan setAccessToken={setAccessToken} />
         </PermissionGuard>
       ),
     },

@@ -36,16 +36,16 @@ function Scan({ setAccessToken }: Props) {
       headers: {
         'content-type': 'application/json',
       },
-      body: JSON.stringify({
+      body: {
         token: secret,
-      }),
+      },
     });
     setAccessToken(data.token);
     navigate('/');
   };
 
   return (
-    <>
+    <div style={{ height: '100vh', display: 'flex', flexFlow: 'column', background: '#000' }}>
       <Modal show={!!invite}>
         <Modal.Header onHide={() => setInvite(null)} closeButton>
           <Modal.Title>Checks out!</Modal.Title>
@@ -59,8 +59,8 @@ function Scan({ setAccessToken }: Props) {
           <Button variant="primary" onClick={onClickClaim}>Claim</Button>
         </Modal.Footer>
       </Modal>
-      <video ref={ref} />
-    </>
+      <video ref={ref} style={{ width: '100%', margin: 'auto' }} />
+    </div>
   );
 }
 
