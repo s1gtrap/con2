@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
@@ -48,13 +49,15 @@ function Map() {
   const [reports, setReports] = useState<Report[] | null>(null);
   const [user] = useAuthContext();
 
-  useEffect(() => {
+  const load = useCallback(() => {
     Promise.all([geolocation(), fetchAuthJson<Report[]>(user!.token, '/api/v1/reports')])
       .then(([coords, reports]) => {
         setCoords(coords);
         setReports(reports);
       });
   }, [user]);
+
+  useEffect(() => load(), [load]);
 
   if (!coords || !user) {
     return <Spinner />;
@@ -65,11 +68,14 @@ function Map() {
       display: 'flex', flexDirection: 'column', height: '100vh'
     }}>
       <nav className="navbar navbar-expand-lg bg-light">
-        <div className="container">
+        <div className="container-fluid">
           <Link to="/" className="navbar-brand">Con^2</Link>
-          <Link to="/report">
-            <button className="btn btn-outline-success" type="submit">Submit</button>
-          </Link>
+          <form className="d-flex" role="search">
+            <Button variant="outline" className="float-right" onClick={load}>Refresh</Button>
+            <Link to="/report">
+              <Button variant="outline-primary" className="ms-1" type="submit">Report</Button>
+            </Link>
+          </form>
         </div>
       </nav >
       <div style={{ flexGrow: 1 }}>
