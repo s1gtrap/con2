@@ -15,7 +15,7 @@ function Home() {
           <Button>Invite Friend</Button>
         </Link>
         <Link to="/map">
-          <Button variant="success ml-2">View Map</Button>
+          <Button variant="secondary ms-1">View Map</Button>
         </Link>
       </>
     );
