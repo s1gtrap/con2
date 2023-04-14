@@ -91,7 +91,7 @@ function App() {
       children: [
         {
           path: '/',
-          element: <Home />,
+          element: <Home setAccessToken={setAccessToken} />,
         },
         {
           path: '/me',

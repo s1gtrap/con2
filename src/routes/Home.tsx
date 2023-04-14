@@ -3,7 +3,11 @@ import { Link } from 'react-router-dom';
 
 import { useAuthContext } from '../App';
 
-function Home() {
+type Props = {
+  setAccessToken: (t: string | null) => void,
+}
+
+function Home({ setAccessToken }: Props) {
   const [user] = useAuthContext();
   if (user?.id) {
     return (
@@ -27,6 +31,8 @@ function Home() {
         <Link to="signup">
           <Button>Sign Up</Button>
         </Link>
+
+        <Button variant="secondary ms-1" onClick={() => setAccessToken('dummy-demo')}>Try Demo</Button>
       </>
     );
   }

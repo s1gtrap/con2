@@ -28,6 +28,9 @@ function Scan({ setAccessToken }: Props) {
         })();
       }
     },
+    constraints: {
+      video: { facingMode: 'environment' }
+    },
   });
 
   const onClickClaim = async () => {
